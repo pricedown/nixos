@@ -10,9 +10,6 @@
 
   hardware = {
     opengl.enable = true;
-
-    # Most wayland compositors need this
-    nvidia.modesetting.enable = true;
   };
 
   boot.loader = {
@@ -42,6 +39,11 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
+  # NVIDIA drivers
+  #hardware.nvidia.modesetting.enable = true;
+  #programs.hyprland.nvidiaPatches = true;
+  #services.xserver.videoDrivers = [ "nvidia" ];
 
   # -------------------
   # Users & Environment
@@ -132,7 +134,6 @@
 
   programs.hyprland = {
     enable = true;
-    nvidiaPatches = true;
     xwayland.enable = true;
   };
 
@@ -159,8 +160,13 @@
   };
 
   services.xserver = {
+    enable = true;
     layout = "us";
     xkbVariant = "";
+
+    deviceSection = ''
+      Option "TearFree" "true"
+    '';
 
     displayManager = {
       gdm.enable = true;
