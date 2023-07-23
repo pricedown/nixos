@@ -23,6 +23,10 @@
   networking = {
     hostName = "jmhi-nixos";
     networkmanager.enable = true;
+
+    # firewall.enable = false;
+    # firewall.allowedTCPPorts = [ ... ];
+    # firewall.allowedUDPPorts = [ ... ];
   };
 
   # Locale
@@ -137,6 +141,13 @@
     xwayland.enable = true;
   };
 
+  # Boilerplate they said I might need idk
+  programs.mtr.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+
   # --------
   # Services
   # --------
@@ -173,23 +184,6 @@
       gdm.wayland = true;
     };
   };
-
-
-
-
-
-
-  # Boilerplate they said I might need idk
-  programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
-  # Firewall
-  # networking.firewall.enable = false;
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
