@@ -8,6 +8,9 @@
       ./hardware-configuration.nix
     ];
 
+  # Since this is being ran on a VM
+  virtualisation.virtualbox.guest.enable = true;
+
   hardware = {
     opengl.enable = true;
   };
@@ -45,9 +48,9 @@
   };
 
   # NVIDIA drivers
-  #hardware.nvidia.modesetting.enable = true;
-  #programs.hyprland.nvidiaPatches = true;
-  #services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.modesetting.enable = true;
+  programs.hyprland.nvidiaPatches = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # -------------------
   # Users & Environment
@@ -85,11 +88,16 @@
 
   environment.systemPackages = with pkgs; [
      # Hyprland
+     dbus
      dunst
+     gtk3
      kitty
      libnotify
      rofi-wayland
      swww
+     xdg-desktop-portal-hyprland
+     hyprland-protocols
+     hyprland-share-picker
      # waybar
      (waybar.overrideAttrs (oldAttrs: {
          mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
@@ -106,8 +114,10 @@
      transmission-qt
 
      # Terminal Apps
+     btop
      curl
      git
+     killall
      man
      neofetch
      neovim
@@ -116,6 +126,7 @@
      tmux
      unzip
      wget
+     xterm
 
      # Code
      nixfmt
@@ -130,6 +141,7 @@
     WLR_NO_HARDWARE_CURSORS = "1";
     NIXOS_OZONE_WL = "1";
     EDITOR = "nvim";
+    WLR_RENDERER_ALLOW_SOFTWARE = "1 Hyprland";
   };
 
   # --------
