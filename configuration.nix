@@ -8,19 +8,13 @@
       ./hardware-configuration.nix
     ];
 
-  # Since this is being ran on a VM
-  virtualisation.virtualbox.guest.enable = true;
 
   hardware = {
     opengl.enable = true;
   };
 
   boot.loader = {
-     grub = {
-       enable = true;
-       device = "/dev/sda";
-       useOSProber = true;
-     };
+    systemd-boot.enable = true;
   };
 
   networking = {
@@ -48,7 +42,17 @@
   };
 
   # NVIDIA drivers
-  hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia = {
+	  modesetting.enable = true;
+	  prime = {
+		  offload = {
+			enable = true;
+		  	enableOffloadCmd = true;
+		  };
+		  nvidiaBusId = "PCI:1:0:0";
+		  intelBusId = "PCI:0:2:0";
+	  };	
+  };
   programs.hyprland.nvidiaPatches = true;
   services.xserver.videoDrivers = [ "nvidia" ];
 
@@ -66,7 +70,6 @@
     packages = with pkgs; [
 
       # Tools
-
       protonvpn-gui
 
       # Firmware
@@ -91,13 +94,19 @@
      dbus
      dunst
      gtk3
+     hyprland-protocols
+     hyprland-share-picker
+     hyprpaper
      kitty
      libnotify
      rofi-wayland
      swww
+     wofi
      xdg-desktop-portal-hyprland
-     hyprland-protocols
-     hyprland-share-picker
+     wl-clipboard
+     wl-clipboard-x11
+     xclip
+
      # waybar
      (waybar.overrideAttrs (oldAttrs: {
          mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
@@ -124,9 +133,23 @@
      ripgrep
      rmlint
      tmux
+     tree
      unzip
      wget
      xterm
+     # browsh with vim
+    #(callPackage (fetchgit {
+    #  url = "https://www.github.com/browsh-org/browsh.git";
+    #  ref = "vim-mode-branch";
+    #}) {})
+
+    # Virtualization
+     virtualbox
+     bridge-utils
+     libvirt
+     qemu
+     qemu_kvm
+     virt-manager
 
      # Code
      nixfmt
@@ -135,6 +158,11 @@
      python3Full
      jdk openjdk17-bootstrap jre8
      csslint
+     nodejs_20
+
+    # Theming
+    jetbrains-mono
+    font-awesome
   ];
 
   environment.sessionVariables = {
@@ -195,6 +223,15 @@
       gdm.enable = true;
       gdm.wayland = true;
     };
+  };
+
+  services.tlp = {
+	  enable = true;
+	  settings = {
+		  START_CHARGE_THRESH_BAT0 = 75;
+		  STOP_CHARGE_THRESH_BAT0 = 80;
+		  RESTORE_THRESHOLDS_ON_BAT = 1;
+	  };
   };
 
   # This value determines the NixOS release from which the default
