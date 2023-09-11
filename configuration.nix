@@ -8,13 +8,15 @@
       ./hardware-configuration.nix
     ];
 
-
   hardware = {
     opengl.enable = true;
   };
 
-  boot.loader = {
-    systemd-boot.enable = true;
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+    };
+    kernelParams = [ "mem_sleep_default=deep" ];
   };
 
   networking = {
@@ -42,19 +44,18 @@
   };
 
   # NVIDIA drivers
-  hardware.nvidia = {
-	  modesetting.enable = true;
-	  prime = {
-		  offload = {
-			enable = true;
-		  	enableOffloadCmd = true;
-		  };
-		  nvidiaBusId = "PCI:1:0:0";
-		  intelBusId = "PCI:0:2:0";
-	  };	
-  };
   programs.hyprland.nvidiaPatches = true;
   services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.modesetting.enable = true;
+
+  hardware.nvidia.prime = {
+    offload = {
+      enable = true;
+      enableOffloadCmd = true;
+    };
+    nvidiaBusId = "PCI:1:0:0";
+    intelBusId = "PCI:0:2:0";
+  };
 
   # -------------------
   # Users & Environment
@@ -192,6 +193,23 @@
   # Services
   # --------
 
+	
+  # Powersaving
+  services.power-profiles-daemon.enable = false;
+  services.thermald.enable = true;
+  services.tlp = {
+    enable = true;
+      settings = {
+	CPU_BOOST_ON_AC = 1;
+	CPU_BOOST_ON_BAT = 0;
+	CPU_SCALING_GOVERNOR_ON_AC = "performance";
+	CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+	START_CHARGE_THRESH_BAT0 = 75;
+	STOP_CHARGE_THRESH_BAT0 = 80;
+	RESTORE_THRESHOLDS_ON_BAT = 1;
+      };
+  };
+	
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
@@ -223,15 +241,6 @@
       gdm.enable = true;
       gdm.wayland = true;
     };
-  };
-
-  services.tlp = {
-	  enable = true;
-	  settings = {
-		  START_CHARGE_THRESH_BAT0 = 75;
-		  STOP_CHARGE_THRESH_BAT0 = 80;
-		  RESTORE_THRESHOLDS_ON_BAT = 1;
-	  };
   };
 
   # This value determines the NixOS release from which the default
