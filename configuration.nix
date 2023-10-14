@@ -15,7 +15,7 @@
   # ====== Hardware ======
 
   boot.loader.systemd-boot.enable = true;
-  #boot.loader.grub.devices = [ "/dev/sda" ]; use grub or systemd-boot
+  #boot.loader.grub.devices = [ "/dev/sda" ]; # use either grub or systemd-boot
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
@@ -23,7 +23,7 @@
   services.xserver.enable = true;
   sound.enable = true;
 
-  # keyboard settings for xserver
+  # keyboard settings for xorg
   services.xserver.layout = "us";
   services.xserver.xkbVariant = "";
 
@@ -44,22 +44,25 @@
 
   # ====== Security ======
 
-  services.openssh.enable = true; # enable remote login
+  services.openssh.enable = true; # remote login
   security.rtkit.enable = true;
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
-      80 # http
-      443 # wget
+
+      # Web
+      80    # http
+      443   # wget
+
       # SSH
-      22 # local port
-      6923 # local port
-      6922 # local port
+      22    # local
+
       # Minecraft
       25565
       25566
-      8123 # dynmap
+      8123  # dynmap
       24454 # voicemod
+
     ];
     allowedUDPPorts = [
       # Minecraft
@@ -175,7 +178,6 @@
     shutdown="echo 'Do not hard shutdown the server without permission.'";
   };
 
-
   # ====== Programs ======
 
   networking.networkmanager.enable = true;
@@ -215,7 +217,7 @@
 
     displayManager = {
       gdm.enable = true;
-      startx.enable = true; # allow manually starting xorg
+      startx.enable = true; # starting xorg from tty
     };
 
     windowManager = { i3.enable = true; };
