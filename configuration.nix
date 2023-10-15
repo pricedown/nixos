@@ -46,8 +46,8 @@
 
   services.openssh = {
     enable = true; # remote login
-    ports = [ 22 ];
     settings.PermitRootLogin = "yes";
+    ports = [ 22 ];
   };
   
   security.rtkit.enable = true;
