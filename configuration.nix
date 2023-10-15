@@ -50,7 +50,7 @@
     enable = true;
     allowedTCPPorts = [
 
-      # Web
+      # WWW
       80    # http
       443   # wget
 
@@ -58,8 +58,9 @@
       22    # local
 
       # Minecraft
-      25565
-      25566
+      25565 # vanilla
+      25566 # modded
+      25569 # testing
       8123  # dynmap
       24454 # voicemod
 
@@ -118,36 +119,33 @@
 
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-
-    # Desktop
-    alacritty
-    firefox
-    flameshot
-    lxappearance
-    monitor
-    pavucontrol
-    transmission-qt
-    xterm
-
-    # Command line
-    btop
+    
+    # Desktop environment
+    alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm
+    
+    # Network
     curl
-    fzf
     git
-    killall
+    wget
+    
+    # File
+    fzf
     man
-    neofetch
     neovim
     poppler_utils
     ripgrep
     rmlint
-    tmux
     tree
     unzip
-    wget
     xclip
     zip
-
+    
+    # Process
+    btop
+    killall
+    neofetch
+    tmux
+    
     # Virtualisation
     bridge-utils
     libvirt
@@ -155,8 +153,8 @@
     qemu_kvm
     virt-manager
     x11docker
-
-    # Coding utilities
+    
+    # Coding utils
     cargo rustc rust-analyzer rustfmt
     csslint
     gcc clang clang-tools cmake cmake-format cmake-language-server
