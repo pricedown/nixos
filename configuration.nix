@@ -44,7 +44,12 @@
 
   # ====== Security ======
 
-  services.openssh.enable = true; # remote login
+  services.openssh = {
+    enable = true; # remote login
+    ports = [ 22 ];
+    settings.PermitRootLogin = "yes";
+  };
+  
   security.rtkit.enable = true;
   networking.firewall = {
     enable = true;
@@ -66,11 +71,13 @@
 
     ];
     allowedUDPPorts = [
+    
       # Minecraft
       24454
       25565
       25566
       8123
+      
     ];
   };
 
@@ -197,14 +204,6 @@
   systemd.services = {
     "getty@tty1".enable = false;
     "autovt@tty1".enable = false;
-  };
-
-  # SSH
-  services.openssh = {
-    ports = [ 22 6923 ];
-    settings = {
-      PermitRootLogin = "yes";
-    };
   };
 
   # Display server
