@@ -49,7 +49,7 @@
     settings.PermitRootLogin = "yes";
     ports = [ 22 ];
   };
-  
+
   security.rtkit.enable = true;
   networking.firewall = {
     enable = true;
@@ -71,13 +71,13 @@
 
     ];
     allowedUDPPorts = [
-    
+
       # Minecraft
       24454
       25565
       25566
       8123
-      
+
     ];
   };
 
@@ -93,12 +93,15 @@
 
       # IDE
       alacritty
+      godot_4
       jetbrains.rider
       neovim
       tmux
       unityhub
 
       # Desktop
+      anydesk
+      calibre
       firefox
       gnome.nautilus
       nomachine-client
@@ -126,19 +129,23 @@
 
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    
+
     # Desktop environment
     alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm
-    
+    jetbrains-mono font-awesome
+
     # Network
     curl
     git
     wget
-    
+
     # File
+    ffmpeg
     fzf
+    lf
     man
     neovim
+    neovim-remote
     poppler_utils
     ripgrep
     rmlint
@@ -146,13 +153,14 @@
     unzip
     xclip
     zip
-    
+
     # Process
     btop
     killall
     neofetch
     tmux
-    
+    tmux-sessionizer
+
     # Virtualisation
     bridge-utils
     libvirt
@@ -160,12 +168,16 @@
     qemu_kvm
     virt-manager
     x11docker
-    
+
     # Coding utils
     cargo rustc rust-analyzer rustfmt
     csslint
+    dotnet-runtime_8
+    dotnet-sdk_8
     gcc clang clang-tools cmake cmake-format cmake-language-server
+    gnumake
     jdk openjdk17-bootstrap jre8
+    mono5
     nixfmt
     nodejs_20
     python3Full
