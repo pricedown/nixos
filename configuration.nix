@@ -83,7 +83,7 @@
 
   # ====== Users ======
 
-  services.getty.autologinUser = "jmhi"; # automatically login
+  services.getty.autologinUser = "jmhi"; # automatic login
 
   users.users.jmhi = {
     isNormalUser = true;
@@ -185,7 +185,7 @@
   ];
 
   environment.shellAliases = {
-    nixos-edit="su root -p -c 'cd /etc/nixos/ && nvim ./ -c 'NvimTreeFocus' '";
+    nixos="su root -p -c 'cd /etc/nixos/ && nvim ./ -c 'NvimTreeFocus' '";
     nixos-clean="sudo nix-collect-garbage -d && sudo nix profile wipe-history --profile /nix/var/nix/profiles/system --older-than 14d --extra-experimental-features nix-command";
     nixos-evaluate="sudo nix-instantiate '<nixpkgs/nixos>' -A system";
     nixos-switch="sudo nixos-rebuild switch";
