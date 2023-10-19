@@ -54,11 +54,11 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
-
+    
       # WWW
       80    # http
       443   # wget
-
+      
       # SSH
       22    # local
 
@@ -96,8 +96,10 @@
       godot_4
       jetbrains.rider
       neovim
+      neovim-remote
       tmux
       unityhub
+      zellij
 
       # Desktop
       anydesk
@@ -136,10 +138,12 @@
 
     # Network
     curl
+    gh
     git
     wget
 
     # File
+    bat
     ffmpeg
     fzf
     lf
@@ -160,6 +164,7 @@
     neofetch
     tmux
     tmux-sessionizer
+    zellij
 
     # Virtualisation
     bridge-utils
@@ -229,7 +234,10 @@
       startx.enable = true; # starting xorg from tty
     };
 
-    windowManager = { i3.enable = true; };
+    windowManager = { 
+      i3.enable = true; 
+      hyprland.enable = true;
+    };
 
     deviceSection = ''
       Option "TearFree" "true"
