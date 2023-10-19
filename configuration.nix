@@ -29,28 +29,28 @@
 
   # enable nvidia drivers
   #services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.modesetting.enable = true;
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport32Bit = true;
+  #hardware.nvidia.modesetting.enable = true;
+  #hardware.opengl.enable = true;
+  #hardware.opengl.driSupport32Bit = true;
 
-  # optimize for laptop
+  # optimize battery for laptop
   #services.tlp.enable = true;
   #services.power-profiles-daemon.enable = true;
   #boot.kernelParams = [ "mem_sleep_default=deep" ];
 
   # ignore lid for laptop server
-  services.logind.lidSwitch = "ignore";
-  services.logind.lidSwitchExternalPower = "ignore";
+  #services.logind.lidSwitch = "ignore";
+  #services.logind.lidSwitchExternalPower = "ignore";
 
   # ====== Security ======
 
+  # remote login
   services.openssh = {
-    enable = true; # remote login
+    enable = true;
     settings.PermitRootLogin = "yes";
-    ports = [ 22 ];
+    ports = [ ]; # ensure that the firewall allows these!
   };
 
-  security.rtkit.enable = true;
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
@@ -81,6 +81,8 @@
     ];
   };
 
+  security.rtkit.enable = true;
+  
   # ====== Users ======
 
   services.getty.autologinUser = "jmhi"; # automatic login
@@ -133,7 +135,7 @@
   environment.systemPackages = with pkgs; [
 
     # Desktop environment
-    alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm
+    alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
     jetbrains-mono font-awesome
 
     # Network
