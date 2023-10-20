@@ -48,7 +48,7 @@
   services.openssh = {
     enable = true;
     settings.PermitRootLogin = "yes";
-    ports = [ ]; # ensure that the firewall allows these!
+    ports = [ 22 ]; # ensure that the firewall allows these!
   };
 
   networking.firewall = {
@@ -118,6 +118,7 @@
       lunar-client
       lutris
       prismlauncher
+      signal-desktop
       spotify
       steam
 
@@ -136,7 +137,15 @@
 
     # Desktop environment
     alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
+    pkgs.dunst libnotify
     jetbrains-mono font-awesome
+    
+    # Hyprland
+    waylock dbus dunst gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty libnotify rofi-wayland swww wofi xdg-desktop-portal-hyprland wl-clipboard wl-clipboard-x11 xorg.libxcb xclip
+    (waybar.overrideAttrs (oldAttrs: {
+        mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
+      })
+    )
 
     # Network
     curl
@@ -202,6 +211,12 @@
     shutdown="echo 'Do not hard shutdown the server without permission.'";
   };
 
+  environment.sessionVariables = {
+    # For Hyprland WM
+    WLR_NO_HARDWARE_CURSORS = "1";
+    WLR_RENDERER_ALLOW_SOFTWARE = "1 Hyprland";
+  };
+
   # ====== Programs ======
 
   networking.networkmanager.enable = true;
@@ -245,6 +260,11 @@
       Option "TearFree" "true"
       '';
   };
+  
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
 
   # Sound server
   hardware.pulseaudio.enable = false;
@@ -252,8 +272,8 @@
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
-    pulse.enable = true;
     jack.enable = true;
+    pulse.enable = true;
   };
 
   # Powersave for laptops
@@ -265,6 +285,12 @@
     START_CHARGE_THRESH_BAT0 = 75;
     STOP_CHARGE_THRESH_BAT0 = 80;
     RESTORE_THRESHOLDS_ON_BAT = 1;
+  };
+
+  # XDG for compatibility
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # ====== Configuration version // Don't change ======
