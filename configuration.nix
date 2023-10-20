@@ -35,7 +35,7 @@
 
   # optimize battery for laptop
   #services.tlp.enable = true;
-  #services.power-profiles-daemon.enable = true;
+  #services.power-profiles-daemon.enable = false;
   #boot.kernelParams = [ "mem_sleep_default=deep" ];
 
   # ignore lid for laptop server
@@ -253,7 +253,6 @@
 
     windowManager = { 
       i3.enable = true; 
-      hyprland.enable = true;
     };
 
     deviceSection = ''
