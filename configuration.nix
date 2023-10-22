@@ -111,6 +111,7 @@
       nomachine-client
       obs-studio
       protonvpn-gui
+      tor-browser-bundle-bin
       wootility
 
       # Social
