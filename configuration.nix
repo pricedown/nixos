@@ -136,16 +136,11 @@
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
 
-    # Desktop environment
+    # Desktop
     alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
-    pkgs.dunst libnotify
 	
     # Hyprland
-    waylock dbus dunst gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty libnotify rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip
-    (waybar.overrideAttrs (oldAttrs: {
-        mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
-      })
-    )
+    waylock dbus dunst libnotify gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip (waybar.overrideAttrs (oldAttrs: { mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "]; }))
 
     # Network
     curl
@@ -153,7 +148,7 @@
     git
     wget
 
-    # File
+    # Files
     bat
     ffmpeg
     fzf
@@ -169,7 +164,7 @@
     xclip
     zip
 
-    # Process
+    # Processes
     btop
     killall
     neofetch
