@@ -139,10 +139,9 @@
     # Desktop environment
     alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
     pkgs.dunst libnotify
-    jetbrains-mono font-awesome
-    
+	
     # Hyprland
-    waylock dbus dunst gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty libnotify rofi-wayland swww wofi xdg-desktop-portal-hyprland wl-clipboard wl-clipboard-x11 xorg.libxcb xclip
+    waylock dbus dunst gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty libnotify rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip
     (waybar.overrideAttrs (oldAttrs: {
         mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
       })
@@ -199,6 +198,13 @@
     nodejs_20
     python3Full
 
+  ];
+
+  fonts.fonts = with pkgs; [
+    (nerdfonts.override { fonts = [ 
+	"JetBrainsMono" 
+	"FiraCode" ]; }) 
+	font-awesome
   ];
 
   environment.shellAliases = {
