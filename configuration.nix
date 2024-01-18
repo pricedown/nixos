@@ -1,5 +1,12 @@
 { config, pkgs, ... }:
 
+let
+  unstable = import 
+  (builtins.fetchTarball https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz)
+
+# reuse the current configuration
+{ config = config.nixpkgs.config; };
+in
 {
   imports =
     [
@@ -15,9 +22,7 @@
   # ====== Hardware ======
 
   boot.loader.systemd-boot.enable = true;
-  #boot.loader.grub.devices = [ "/dev/sda" ]; # use either grub or systemd-boot
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
   # enable audio & display
   services.xserver.enable = true;
@@ -26,59 +31,48 @@
   # keyboard settings for xorg
   services.xserver.layout = "us";
   services.xserver.xkbVariant = "";
+  services.xserver.libinput.enable = false;
+
+  # monitor settings
+  services.xserver.dpi = 215;
+  environment.variables.GDK_SCALE = "0.5";
 
   # enable nvidia drivers
-  #services.xserver.videoDrivers = [ "nvidia" ];
-  #hardware.nvidia.modesetting.enable = true;
-  #hardware.opengl.enable = true;
-  #hardware.opengl.driSupport32Bit = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.modesetting.enable = true;
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport32Bit = true;
 
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+  
   # optimize battery for laptop
-  #services.tlp.enable = true;
-  #services.power-profiles-daemon.enable = false;
-  #boot.kernelParams = [ "mem_sleep_default=deep" ];
+  services.tlp.enable = true;
+  services.power-profiles-daemon.enable = false;
+  # boot.kernelParams = [ "mem_sleep_default=deep" ];
 
-  # ignore lid for laptop server
-  #services.logind.lidSwitch = "ignore";
-  #services.logind.lidSwitchExternalPower = "ignore";
+  # services.xserver.monitorSection = ''
+  #   Modeline "1920x1440R" 703.75  1920 2096 2304 2688  1440 1443 1447 1588 -hsync +vsync
+  # '';
+  services.xserver.deviceSection = ''
+    Option "TearFree" "true"
+    Option "ModeValidation" "AllowNonEdidModes"
+  '';
 
   # ====== Security ======
 
   # remote login
   services.openssh = {
-    enable = true;
-    settings.PermitRootLogin = "yes";
+    enable = false;
+    settings.PermitRootLogin = "no";
     ports = [ 22 ]; # ensure that the firewall allows these!
   };
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [
-    
-      # WWW
-      80    # http
-      443   # wget
-      
-      # SSH
-      22    # local
-
-      # Minecraft
-      25565 # vanilla
-      25566 # modded
-      25569 # testing
-      8123  # dynmap
-      24454 # voicemod
-
-    ];
-    allowedUDPPorts = [
-
-      # Minecraft
-      24454
-      25565
-      25566
-      8123
-
-    ];
+    allowedTCPPorts = [ ];
+    allowedUDPPorts = [ ];
   };
 
   security.rtkit.enable = true;
@@ -95,61 +89,114 @@
 
       # IDE
       alacritty
+      dia
       godot_4
-      jetbrains.rider
+      jetbrains-toolbox
       neovim
       neovim-remote
+      starship
       tmux
       unityhub
       zellij
 
       # Desktop
       anydesk
+      autokey
       calibre
+      chkrootkit
       firefox
       gnome.nautilus
       nomachine-client
       obs-studio
       protonvpn-gui
       tor-browser-bundle-bin
-      wootility
+      unstable.teamviewer
 
       # Social
       discord
       lunar-client
-      lutris
-      prismlauncher
       signal-desktop
       spotify
+    
+      # Games
+      prismlauncher
       steam
-
-      # Dependencies
+      lutris
+      unstable.vinegar
+      unstable.r2modman
+      wesnoth
+      
+      # Settings
+      wootility
       wooting-udev-rules
+      bluez
+      bluez-tools
 
     ];
   };
 
   # ====== Root ======
+  
+  nixpkgs.config.permittedInsecurePackages = [ 
+      "electron-25.9.0"
+  ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    vivaldi = {
+        proprietaryCodecs = true;
+        enableWideVine = true;
+    };
+  };
   environment.systemPackages = with pkgs; [
 
-    # Desktop
-    alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
-	
+    # Desktop environment
+    pkgs.dunst libnotify xdg-utils
+    jetbrains-mono font-awesome corefonts
+    alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty xorg.xwininfo xorg.libxcvt linux-wallpaperengine xwallpaper xorg.xeyes
+    raylib mesa
+    pkg-config
+    wayland
+    libxkbcommon
+    wayland-protocols
+    xorg.libX11.dev
+    xorg.libX11
+    gnumake
+    xorg.libXcursor.dev 
+    xorg.libXrandr.dev 
+    xorg.libXft.dev
+    xorg.libXft
+    xorg.libXinerama.dev
+    xorg.libXinerama
+    xorg.libXi.dev
+    libGL.dev
+    clang
+    libclang.dev
+    libclang.lib
+    clangStdenv
+    glfw
+    
     # Hyprland
-    waylock dbus brightnessctl dunst feh libnotify gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip (waybar.overrideAttrs (oldAttrs: { mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "]; }))
+    waylock dbus dunst gtk3 hyprland-protocols hyprpaper kitty libnotify feh rofi-wayland swww wofi  wl-clipboard wl-clipboard-x11 xorg.libxcb xclip grim slurp sway-contrib.grimshot waypaper
+    (waybar.overrideAttrs (oldAttrs: {
+        mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "];
+      })
+    )
 
     # Network
     curl
     gh
     git
+    inetutils
     wget
 
-    # Files
+    # File
+	lazygit
     bat
+    chkrootkit
+    exiftool
     ffmpeg
     fzf
     lf
@@ -164,10 +211,15 @@
     xclip
     zip
 
-    # Processes
+    # Process
     btop
+    gdb
+    ghidra
     killall
     neofetch
+    ocamlPackages.hxd
+    pstree
+    scanmem
     tmux
     tmux-sessionizer
     zellij
@@ -181,25 +233,26 @@
     x11docker
 
     # Coding utils
-    cargo rustc rust-analyzer rustfmt
+    rustup cargo rustc rust-analyzer rustfmt
     csslint
-    dotnet-runtime_8
-    dotnet-sdk_8
-    gcc clang clang-tools cmake cmake-format cmake-language-server
+    msbuild csharp-ls mono dotnet-runtime_8 dotnet-sdk dotnet-sdk_8
+    gcc clang clang-tools cmake cmake-format cmake-language-server unstable.emscripten
     gnumake
-    jdk openjdk17-bootstrap jre8
-    mono5
+    jdk17 jdk
     nixfmt
     nodejs_20
     python3Full
-
+    lua-language-server
   ];
 
-  fonts.fonts = with pkgs; [
-    (nerdfonts.override { fonts = [ 
-	"JetBrainsMono" 
-	"FiraCode" ]; }) 
-	font-awesome
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [
+	  "JetBrainsMono"
+	  "FiraCode" 
+      ]; })
+	  font-awesome
+      cascadia-code
+      redhat-official-fonts
   ];
 
   environment.shellAliases = {
@@ -210,13 +263,16 @@
     nixos-upgrade="sudo nixos-rebuild switch --upgrade";
 
     lspacks="nix-store --query --requisites /run/current-system";
-    shutdown="echo 'Do not hard shutdown the server without permission.'";
   };
 
+  # TODO put in *user* session vars
   environment.sessionVariables = {
     # For Hyprland WM
+    NIXOS_OZONE_WL = "1";
     WLR_NO_HARDWARE_CURSORS = "1";
     WLR_RENDERER_ALLOW_SOFTWARE = "1 Hyprland";
+
+    LIBCLANG_PATH="${pkgs.libclang.lib}/lib";
   };
 
   # ====== Programs ======
@@ -241,12 +297,15 @@
     "getty@tty1".enable = false;
     "autovt@tty1".enable = false;
   };
-
+  
   # Display server
   services.xserver = {
-    displayManager.defaultSession = "gnome-xorg";
+    displayManager.defaultSession = "hyprland";
 
-    desktopManager = { gnome.enable = true; };
+    desktopManager = { 
+        gnome.enable = false; 
+        xterm.enable = false;
+    };
 
     displayManager = {
       gdm.enable = true;
@@ -254,19 +313,23 @@
     };
 
     windowManager = { 
-      i3.enable = true; 
+      i3 = { 
+        enable = true; 
+        extraPackages = with pkgs; [
+          dmenu
+            i3status 
+            i3lock 
+            i3blocks 
+        ];
+      };
     };
-
-    deviceSection = ''
-      Option "TearFree" "true"
-      '';
   };
   
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
   };
-
+  
   # Sound server
   hardware.pulseaudio.enable = false;
   services.pipewire = {
@@ -287,12 +350,14 @@
     STOP_CHARGE_THRESH_BAT0 = 80;
     RESTORE_THRESHOLDS_ON_BAT = 1;
   };
-
-  # XDG for compatibility
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+ 
+  # Antivirus
+  services.clamav = {
+    daemon.enable = true;
+    updater.enable = true;
   };
+
+  services.teamviewer.enable = true;
 
   # ====== Configuration version // Don't change ======
   system.stateVersion = "23.05";
