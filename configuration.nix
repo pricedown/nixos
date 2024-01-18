@@ -140,7 +140,7 @@
     alacritty firefox lxappearance monitor pavucontrol transmission-qt xterm kitty
 	
     # Hyprland
-    waylock dbus dunst libnotify gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip (waybar.overrideAttrs (oldAttrs: { mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "]; }))
+    waylock dbus brightnessctl dunst feh libnotify gtk3 hyprland-protocols hyprland-share-picker hyprpaper kitty rofi-wayland swww wofi wl-clipboard wl-clipboard-x11 xorg.libxcb xclip (waybar.overrideAttrs (oldAttrs: { mesonFlags = oldAttrs.mesonFlags ++ [" -Dexperimental=true "]; }))
 
     # Network
     curl
